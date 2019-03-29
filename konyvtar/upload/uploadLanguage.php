@@ -1,4 +1,5 @@
 <?php
+	error_reporting(E_ALL & ~E_NOTICE);
 	session_start();
 	require_once "../db.php";
 	
@@ -6,11 +7,20 @@
 		header("location: index.php");
 	}
 	$db = db::get();
+	
+	if (isset($_GET["success"])) {
+	$success = $db->escape($_GET["success"]);
+	}
+	if (isset($_GET["error"])) {
+	$error = $db->escape($_GET["error"]);
+	}
 ?>
 <!DOCTYPE html>
 <html>
 <head>
 	<?php require_once("../head.php"); ?>
+	<link rel="stylesheet" href="../css/sweetalert2.min.css">
+	<script src="../js/sweetalert2.all.min.js"></script>
 	<style>
 		.bg
 		{
@@ -31,9 +41,43 @@
 			box-shadow: inset 13px 6px 26px -2px rgba(0,0,0,0.75);
 		}
 	</style>
+	<script>
+			function errormsg(errortext)
+			{
+				Swal.fire({
+					type: 'error',
+					title: 'Hiba',
+					text: errortext + "!",
+				})
+			}
+			function okmsg(oktext)
+			{
+				Swal.fire(
+					'Siker',
+					oktext + '!',
+					'success'
+					)
+			}
+	</script>
 </head>
 <body class="bg">
-		
+	<?php
+		switch ($error) {
+			case 'copy':
+			echo "<script>errortext = 'A nyelv már létezik!'; errormsg(errortext);</script>";
+			break;
+			case 'empty':
+			echo "<script>errortext = 'Minden mező kitöltése kötelező!'; errormsg(errortext);</script>";
+			break;
+			default:
+			# code..
+			break;
+		}
+		if ($success == "done") {
+			echo "<script>oktext = 'Sikeres feltöltés!'; okmsg(oktext);</script>";
+		}
+	?>
+	
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
 			<a class="navbar-brand" href="#">Adatfeltöltés</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,14 +120,22 @@
 		$language = $db->escape($_POST["language"]);
 		
 	if(empty($language)){
-		echo "Minden mező kitöltése kötelező!";
+		echo "<script>window.location.href='uploadLanguage.php?error=empty'</script>";
 	}else{
-		$insertString = "INSERT INTO languages(
-				`language`
-				) VALUE(
-				'".$language."'
-				);";
-			$db->query($insertString);
+		$checkLanguageQuery = "SELECT * FROM languages WHERE language ='".$language."'";
+        $check = $db->getArray($checkLanguageQuery);
+		
+			if (empty($check)) {
+				$insertString = "INSERT INTO languages(
+					`language`
+					) VALUE(
+					'".$language."'
+					);";
+				$db->query($insertString);
+			}else{
+				echo "<script>window.location.href='uploadLanguage.php?error=copy'</script>";
+			}
+			echo "<script>window.location.href='uploadLanguage.php?success=done'</script>";
 		}
 	}
 ?>
