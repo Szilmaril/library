@@ -91,7 +91,7 @@
 				</thead>
 				<tbody>
 			<?php foreach($allusers as $users):?>
-				<?php if($user["username"] != "admin"): ?>
+				<?php if($user["username"] == "admin"): ?>
 				<tr>
 					<td><?php echo $users["id"]; ?></td>
 					<td><?php echo $users["username"]; ?></td>
