@@ -7,6 +7,7 @@
 		header("location: index.php");
 	}
 	$db = db::get();
+	
 	if (isset($_GET["success"])) {
 	$success = $db->escape($_GET["success"]);
 	}
@@ -18,6 +19,8 @@
 <html>
 <head>
 	<?php require_once("../head.php"); ?>
+	<link rel="stylesheet" href="../css/sweetalert2.min.css">
+	<script src="../js/sweetalert2.all.min.js"></script>
 	<style>
 		.bg
 		{
@@ -38,9 +41,42 @@
 			box-shadow: inset 13px 6px 26px -2px rgba(0,0,0,0.75);
 		}
 	</style>
+	<script>
+			function errormsg(errortext)
+			{
+				Swal.fire({
+					type: 'error',
+					title: 'Hiba',
+					text: errortext + "!",
+				})
+			}
+			function okmsg(oktext)
+			{
+				Swal.fire(
+					'Siker',
+					oktext + '!',
+					'success'
+					)
+			}
+	</script>
 </head>
 <body class="bg">
-		
+	<?php
+		switch ($error) {
+			case 'copy':
+			echo "<script>errortext = 'A kategoria már létezik!'; errormsg(errortext);</script>";
+			break;
+			case 'empty':
+			echo "<script>errortext = 'Minden mező kitöltése kötelező!'; errormsg(errortext);</script>";
+			break;
+			default:
+			# code..
+			break;
+		}
+		if ($success == "done") {
+			echo "<script>oktext = 'Sikeres feltöltés!'; okmsg(oktext);</script>";
+		}
+	?>
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
 			<a class="navbar-brand" href="#">Adatfeltöltés</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,14 +118,22 @@
 		$genre = $db->escape($_POST["genre"]);
 		
 	if(empty($genre)){
-		echo "Minden mező kitöltése kötelező!";
+		echo "<script>window.location.href='uploadCategory.php?error=empty'</script>";
 	}else{
-		$insertString = "INSERT INTO category(
-				`genre`
-				) VALUE(
-				'".$genre."'
-				);";
-			$db->query($insertString);
+		$checkCategoryQuery = "SELECT * FROM category WHERE genre ='".$genre."'";
+        $check = $db->getArray($checkCategoryQuery);
+		
+			if (empty($check)) {
+				$insertString = "INSERT INTO category(
+					`genre`
+					) VALUE(
+					'".$genre."'
+					);";
+				$db->query($insertString);
+			}else{
+				echo "<script>window.location.href='uploadCategory.php?error=copy'</script>";
+			}
+			echo "<script>window.location.href='uploadCategory.php?success=done'</script>";
 		}
 	}
 ?>
