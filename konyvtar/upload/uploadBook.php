@@ -238,34 +238,46 @@
         echo "<script>window.location.href='uploadBook.php?error=wrong'</script>";
 // if everything is ok, try to upload file
     } else {
-        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-        	$cover_image = basename($_FILES["fileToUpload"]["name"]);
-        	
-            $uploadPictureSql = "INSERT INTO `book` (
-			`publishing`,
-			`story`,
-			`book_title`,
-			`cover_image`,
-			`lid`,
-			`quantity`,
-			`language_id`,
-			`writer_id`,
-			`category_id`
-			)VALUES (
-			'".$publishing."',
-			'".$story."',
-			'".$book_title."',
-			'".$cover_image."',
-			'".$lid."',
-			'".$quantity."',
-			'".$language_id."',
-			'".$writer_id."',
-			'".$category_id."')";
-            $query = $db->query($uploadPictureSql);
-        } else {
-            echo "<script>window.location.href='uploadBook.php?error=fault'</script>";
-        }
-		echo "<script>window.location.href='uploadBook.php?success=done'</script>";
+      	$checkIfTitleExistsQuery = "SELECT book_title FROM book WHERE book_title = '".$book_title."'";
+      	$checkIfTitleExists = $db->escape($checkIfTitleExistsQuery);
+
+      	if (empty($checkIfTitleExists)) {
+      		if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) 
+        {
+	        	$cover_image = basename($_FILES["fileToUpload"]["name"]);
+	        	
+	            $uploadPictureSql = "INSERT INTO `book` (
+				`publishing`,
+				`story`,
+				`book_title`,
+				`cover_image`,
+				`lid`,
+				`quantity`,
+				`language_id`,
+				`writer_id`,
+				`category_id`
+				)VALUES (
+				'".$publishing."',
+				'".$story."',
+				'".$book_title."',
+				'".$cover_image."',
+				'".$lid."',
+				'".$quantity."',
+				'".$language_id."',
+				'".$writer_id."',
+				'".$category_id."')";
+	            $query = $db->query($uploadPictureSql);
+	            echo "<script>window.location.href='uploadBook.php?success=done'</script>";
+	        } 
+	        else 
+	        {
+	            echo "<script>window.location.href='uploadBook.php?error=fault'</script>";
+	        }
+      	}
+      	else
+      	{
+      		echo "<script>window.location.href='uploadBook.php?error=already'</script>";
+      	}
     }
 
 }
