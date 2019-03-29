@@ -63,8 +63,14 @@
 			case 'empty':
 			echo "<script>errortext = 'Jelenleg nincs egy felhasználó sem!'; errormsg(errortext);</script>";
 			break;
+			case 'empty2':
+			echo "<script>errortext = 'Minden mezőt töltsön ki!'; errormsg(errortext);</script>";
+			break;
 			case 'copy':
 			echo "<script>errortext = 'Nem változtatott felhasználónevet, vagy már foglalt!'; errormsg(errortext);</script>";
+			break;
+			case 'copy2':
+			echo "<script>errortext = 'Nem változtatott e-mail címet, vagy már foglalt!'; errormsg(errortext);</script>";
 			break;
 			default:
 			# code..
