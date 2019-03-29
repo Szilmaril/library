@@ -11,6 +11,10 @@
 	$db = db::get();
 	$allusers = $db->getArray($selectString);
 	
+	if (isset($_GET["success"])) {
+	$success = $db->escape($_GET["success"]);
+	}
+	
 	if (isset($_GET["error"])) {
 	$error = $db->escape($_GET["error"]);
 	}
@@ -43,6 +47,14 @@
 				text: errortext + "!",
 			})
 		}
+		function okmsg(oktext)
+			{
+				Swal.fire(
+					'Siker',
+					oktext + '!',
+					'success'
+					)
+			}
 	</script>
 </head>
 <body class="bg">
@@ -51,9 +63,15 @@
 			case 'empty':
 			echo "<script>errortext = 'Jelenleg nincs egy felhasználó sem!'; errormsg(errortext);</script>";
 			break;
+			case 'copy':
+			echo "<script>errortext = 'Nem változtatott felhasználónevet, vagy már foglalt!'; errormsg(errortext);</script>";
+			break;
 			default:
 			# code..
 			break;
+		}
+		if ($success == "done") {
+			echo "<script>oktext = 'Sikeres adatmódosítás!'; okmsg(oktext);</script>";
 		}
 	?>
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -91,7 +109,7 @@
 				</thead>
 				<tbody>
 			<?php foreach($allusers as $users):?>
-				<?php if($user["username"] == "admin"): ?>
+				<?php if($users["username"] != "admin"): ?>
 				<tr>
 					<td><?php echo $users["id"]; ?></td>
 					<td><?php echo $users["username"]; ?></td>
