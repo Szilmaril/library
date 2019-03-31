@@ -66,6 +66,9 @@ if (isset($_GET["error"])) {
    case 'wrongPW':
    echo "<script>errortext = 'Nincs jelszó módosítás!'; errormsg(errortext);</script>";
    break;
+   case 'alreadt':
+   echo "<script>errortext = 'Email hasznalatban!'; errormsg(errortext);</script>";
+   break;
    case 'shortPW':
    echo "<script>errortext = 'A jelszó nincs minimum 8 karakter!'; errormsg(errortext);</script>";
    break;

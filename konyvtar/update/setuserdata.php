@@ -31,9 +31,18 @@ else
 					}
 					else
 					{
-						$updateWithNewPasswordQuery = "UPDATE `users` SET `password` = '$newPassword', `email` = '$email', `birthday` = '$birthday' WHERE `users`.`id` = ".$userid;
-						$update = $db->query($updateWithNewPasswordQuery); echo strlen($newPassword);
-						echo "<script>window.location.href='listMyUser.php?success=donePW'</script>";
+						$checkIfEmailRedundantQ = "SELECT email FROM users WHERE email = '".$email."'";
+						$checkIfEmailRedundant = $db->getArray($checkIfEmailRedundantQ);
+
+						if (empty($checkIfEmailRedundant)) {
+							$updateWithNewPasswordQuery = "UPDATE `users` SET `password` = '$newPassword', `email` = '$email', `birthday` = '$birthday' WHERE `users`.`id` = ".$userid;
+							$update = $db->query($updateWithNewPasswordQuery); echo strlen($newPassword);
+							echo "<script>window.location.href='listMyUser.php?success=donePW'</script>";
+						}
+						else
+						{
+							echo "<script>window.location.href='listMyUser.php?error=already'</script>";
+						}
 					}
 					
 				}
