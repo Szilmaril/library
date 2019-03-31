@@ -22,7 +22,7 @@ if (empty($email) || empty($birthday) || empty($passconfEntered)) {
 }
 else
 {
-	if ($passwordconf == $passconfEntered) {
+	if ($passwordconf == $passconfEntered && $passconf != $newPassword) {
 		if (!(empty($newPassword2)) || !(empty($newPassword2))) {
 			if ($newPassword2 == $newPassword) {
 				if (strlen($tmp) >= 8) {
