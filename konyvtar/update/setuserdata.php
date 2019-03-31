@@ -26,9 +26,16 @@ else
 		if (!(empty($newPassword2)) || !(empty($newPassword2))) {
 			if ($newPassword2 == $newPassword) {
 				if (strlen($tmp) >= 8) {
-					$updateWithNewPasswordQuery = "UPDATE `users` SET `password` = '$newPassword', `email` = '$email', `birthday` = '$birthday' WHERE `users`.`id` = ".$userid;
-					$update = $db->query($updateWithNewPasswordQuery); echo strlen($newPassword);
-					echo "<script>window.location.href='listMyUser.php?success=donePW'</script>";
+					if (empty($email)){
+						echo "<script>window.location.href='listMyUser.php?error=empty'</script>";
+					}
+					else
+					{
+						$updateWithNewPasswordQuery = "UPDATE `users` SET `password` = '$newPassword', `email` = '$email', `birthday` = '$birthday' WHERE `users`.`id` = ".$userid;
+						$update = $db->query($updateWithNewPasswordQuery); echo strlen($newPassword);
+						echo "<script>window.location.href='listMyUser.php?success=donePW'</script>";
+					}
+					
 				}
 				else
 				{
